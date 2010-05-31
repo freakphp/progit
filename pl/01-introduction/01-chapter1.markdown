@@ -72,62 +72,62 @@ Figure 1-5. Git przechowuje dane jako migawki projektu w okresie czasu.
 
 To jest istotna różnica pomiędzy Git i prawie wszystkimi innymi systemami VCS. Jej konsekwencją jest to, że Git rewiduje prawie wszystkie aspekty kontroli wersji, które pozostałe systemy po prostu kopiowały z poprzednich generacji. Powoduje także, że Git jest bardziej podobny do mini systemu plików ze zbudowanymi na nim potężnymi narzędziami, niż do zwykłego systemu VCS. Odkryjemy niektóre z zalet które zyskuje się poprzez myślenie o danych w ten sposób, gdy w trzecim rozdziale będziemy omawiać tworzenie gałęzi w Git.
 
-### Nearly Every Operation Is Local ###
+### Prawie każda operacja jest lokalna ###
 
-Most operations in Git only need local files and resources to operate – generally no information is needed from another computer on your network.  If you’re used to a CVCS where most operations have that network latency overhead, this aspect of Git will make you think that the gods of speed have blessed Git with unworldly powers. Because you have the entire history of the project right there on your local disk, most operations seem almost instantaneous.
+Większość operacji w Git wymaga jedynie do pracy lokalnych plików i zasobów - generalnie żadna informacja nie jest potrzebna z innego komputera z twojej sieci. Jeżeli jesteś przyzwyczajony do CVCS, gdzie większośc operacji ma przed sobą opóźnienia sieci, ten aspekt Git sprawi, że pomyślisz iż bogowie prędkości pobłgosławiły Git nieziemskimi siłami. Ponieważ historia całego projektu znajduje się na twoim dysku lokalnym, większośc operacji wydaje się natychmiastowa.
 
-For example, to browse the history of the project, Git doesn’t need to go out to the server to get the history and display it for you—it simply reads it directly from your local database. This means you see the project history almost instantly. If you want to see the changes introduced between the current version of a file and the file a month ago, Git can look up the file a month ago and do a local difference calculation, instead of having to either ask a remote server to do it or pull an older version of the file from the remote server to do it locally.
+Dla przykładu, aby przewertować historię projektu, Git nie potrzebuje dostępu do serwera aby pobrać historię i wyświetlić ją dla Ciebie - lecz czyta ją wprost z lokalnej bazy danych. Znaczy to, że widzisz historię projektu prawie momentalnie. Jeśli chcesz zobaczyć zmiany między obecną wersją pliku, a wersją z przed miesiąca, Git może sprawdzić wersję z miesiąca, i obliczyć różnicę lokalnie, zamiast prosić o to serwer lub pobierać starą wersję pliku ze zdalenego serwera i obliczać różnicę lokalnie. 
 
-This also means that there is very little you can’t do if you’re offline or off VPN. If you get on an airplane or a train and want to do a little work, you can commit happily until you get to a network connection to upload. If you go home and can’t get your VPN client working properly, you can still work. In many other systems, doing so is either impossible or painful. In Perforce, for example, you can’t do much when you aren’t connected to the server; and in Subversion and CVS, you can edit files, but you can’t commit changes to your database (because your database is offline). This may not seem like a huge deal, but you may be surprised what a big difference it can make.
+Znaczy to również, że jest niewiele rzeczy, których nie możesz zrobić będąc offline lub poza siecią VPN. Jeżeli lecisz samolotem lub jedziesz pociągiem i chciałbyś popracować, możesz spokojnie commitować, aż będziesz miał dostęp do połączenia internetowego, aby wrzucić zmiany na serwer. Kiedy wracasz do domu i twój klient VPN nie działa poprawnie, nadal możesz pracować. W wielu innych systemach, nie ma takiej możliwości lub jest ona bardzo utrudniona. Dla przykładu w Perforce, nie możesz za wiele zrobić bez połączenia z serwerem; a w Subversion i CVS, możesz edytować pliki lecz nie możesz commitować zmian do swojej bazy danych ( ponieważ jest ona offline). Może nie brzmi to fascynująco, lecz możesz być zdziwiony jaką robi to wilką różnicę. 
 
-### Git Has Integrity ###
+### Git Jest Integralny ###
 
-Everything in Git is check-summed before it is stored and is then referred to by that checksum. This means it’s impossible to change the contents of any file or directory without Git knowing about it. This functionality is built into Git at the lowest levels and is integral to its philosophy. You can’t lose information in transit or get file corruption without Git being able to detect it.
+Wszystko w Git jest sprawdzane sumą kontrolną przed tym jak zostanie zapisane, a następnie ustalane jest odniesienie do tych danych pooprzez tą sumę kontrolną. Znaczy to, że nie jest możliwa zmiana pliku lub folderu bez wiedzy Git. Funkcjonalność ta jest wbudowana w Git w najniższym poziomie i jest ona integralna ze swoją filozofią. Nie możesz utracić informacji podczas tranzytu lub uzyskać zniszczony plik bez możliwości detekcji tego przez Git. 
 
-The mechanism that Git uses for this checksumming is called a SHA-1 hash. This is a 40-character string composed of hexadecimal characters (0–9 and a–f) and calculated based on the contents of a file or directory structure in Git. A SHA-1 hash looks something like this:
+Mechanizm, który Git wykorzystuje do tworzenia sum kontrolnych nazywa się SHA-1 hash. Jest to 40 znakowy string złożony z hexadecymalnych znaków (0-9 oraz a-f) i wyliczony na podstawie zawartości pliku lub struktory katalogu w Git. Hash SHA-1 wygląda tak:
 
 	24b9da6552252987aa493b52f8696cd6d3b00373
 
-You will see these hash values all over the place in Git because it uses them so much. In fact, Git stores everything not by file name but in the Git database addressable by the hash value of its contents.
+Będziesz widział takie hashe wszędzie dokoła, ponieważ Git używa ich tak często. W rzeczywistości, Git zapisuje wszystko nie używając nazw plików, lecz adresuje sobie je w bazie danych poprzez hash ich zawartości.
 
-### Git Generally Only Adds Data ###
+### Git Generalnie Jedynie Dodaje Dane ###
 
-When you do actions in Git, nearly all of them only add data to the Git database. It is very difficult to get the system to do anything that is not undoable or to make it erase data in any way. As in any VCS, you can lose or mess up changes you haven’t committed yet; but after you commit a snapshot into Git, it is very difficult to lose, especially if you regularly push your database to another repository.
+Kiedy wkonujesz jakieś operacje w Git, niemalże każda z nich jedynie dodanie dane do bazy danych Git. Jest bardzo trudno wykonać coś w systemie co było by nieodwracalne lub zmusić system do usunięcia danych w jakikolwiek sposób. Jak w każdym VCS, możesz stracić lub pomieszać zmiany, których jeszcze nie commitowałeś; lecz jesli zcommitujesz zmiany do Git trudno jest coś utracić, w szczególności, kiedy regularnie wypychasz zmiany do innego repozytorium. 
 
-This makes using Git a joy because we know we can experiment without the danger of severely screwing things up. For a more in-depth look at how Git stores its data and how you can recover data that seems lost, see “Under the Covers” in Chapter 9.
+Czyni to używanie Git przyjemnością, ponieważ wiemy, że możemy eksperymentować bez zagrożenia całkowitej utraty naszej pracy. Więcej dowiesz się na temat tego jak Git przechowuje dane oraz jak przywrocić dane, które uznałeś za utracone w Rozdziale 9 "Pod Kołudrą".
 
-### The Three States ###
+### Trzy Stany ###
 
-Now, pay attention. This is the main thing to remember about Git if you want the rest of your learning process to go smoothly. Git has three main states that your files can reside in: committed, modified, and staged. Committed means that the data is safely stored in your local database. Modified means that you have changed the file but have not committed it to your database yet. Staged means that you have marked a modified file in its current version to go into your next commit snapshot.
+Teraz uważaj. Jest to najważniejsza rzecz do zapamiętania o Git, jeśli chcesz aby reszta procesu nauki poszła gładko. Git posiada trzy główne stany, w których twoje pliki mogą rezydować: zcommitowany, zmodyfikowany oraz staged. Zcommittowany znaczy, że dane są bezpiecznie zapisane w twojej lokalnej bazie danych. Zmodyfikowany znaczy, iż dokonałeś zmian w pliku, lecz niezcommittowales ich jeszcze do swojej lokalnej bazy danych. Staged znaczy, że zaznaczyłeś zmodyfikowany plik w swojej obecnej wersji, aby został wysłany podczas najbliższego commita.
 
-This leads us to the three main sections of a Git project: the Git directory, the working directory, and the staging area.
+Prowadzi to nas do trzech głównych sekcji projektu w Git: katalog Git, katalog prac, oraz przestrzeń staged.
 
 Insert 18333fig0106.png 
-Figure 1-6. Working directory, staging area, and git directory.
+Rycina 1-6. Ktalog prac, przestrzeń staging, oraz katalog git.
 
-The Git directory is where Git stores the metadata and object database for your project. This is the most important part of Git, and it is what is copied when you clone a repository from another computer.
+Ktalog Git jest to katalog, w którym Git przetrzymuj metadane oraz obiekty bazy danych dla twojego projektu. Jest to najważniejsza część Git i to jest to co jest kopiowane kiedy klonujesz repozytorium z innego komputera.
 
-The working directory is a single checkout of one version of the project. These files are pulled out of the compressed database in the Git directory and placed on disk for you to use or modify.
+Katalog pracy jest to pojedyńczy checkout jednej z wersji projektu. Pliki te są pobierane ze skompresowanej bazy danych z katalogu Git i umieszczone na dysku dla twojego użytku oraz modyfikacji.
 
-The staging area is a simple file, generally contained in your Git directory, that stores information about what will go into your next commit. It’s sometimes referred to as the index, but it’s becoming standard to refer to it as the staging area.
+Przestrzeń staging jest to prosty plik, generalnie znajdujący się w twoim katalogu Git, który przetrzymuje informacje o tym co wejdzie w skład następnego commita. Jest czasem porównywany do indexu, ale staję się to standardem nazywając go przestrzenią staging.
 
-The basic Git workflow goes something like this:
+Podstawowy przebieg pracy wyglada mniej więcej tak:
 
-1.	You modify files in your working directory.
-2.	You stage the files, adding snapshots of them to your staging area.
-3.	You do a commit, which takes the files as they are in the staging area and stores that snapshot permanently to your Git directory.
+1.	Modyfikujesz pliki w swoim katalogu pracy.
+2.	Stage plików, dodając ich migawki do przestrzeni staging.
+3.	Wykonujesz commit, który pobiera pliki takie jakie są w przestrzeni staging i zapisuje tą migawke na stałe do katalogu Git.
 
-If a particular version of a file is in the git directory, it’s considered committed. If it’s modified but has been added to the staging area, it is staged. And if it was changed since it was checked out but has not been staged, it is modified. In Chapter 2, you’ll learn more about these states and how you can either take advantage of them or skip the staged part entirely.
+Jeżeli jakaś szczególna wersja pliku jest w kataolgu git, uznany jest on za zcommitowany. Jeżeli został zmodyfikowany, ale został dodany do przestrzeni staging, jest on więc staged. Jeżeli plik został zmieniony od czasu checkoutu, ale nie został staged, jest dalej nazywany zmodyfikowanym. W Rozdziale 2, nauczysz się o tych stanach i jak z nich w odpowiedni sposób skorzystać lub pominąć część staged całkowicie.
 
-## Installing Git ##
+## Instalacja Git ##
 
-Let’s get into using some Git. First things first—you have to install it. You can get it a number of ways; the two major ones are to install it from source or to install an existing package for your platform.
+Przejdźmy do korzystania Git. Pierwsze rzeczy najpierw-musisz go zainstalować. Możesz zdobyć go wieloma sposobami; te dwie główne to instalacja Git ze źródła lub z instniejącej paczki dla twojej platformy.
 
-### Installing from Source ###
+### Instalacja ze Źródła ###
 
-If you can, it’s generally useful to install Git from source, because you’ll get the most recent version. Each version of Git tends to include useful UI enhancements, so getting the latest version is often the best route if you feel comfortable compiling software from source. It is also the case that many Linux distributions contain very old packages; so unless you’re on a very up-to-date distro or are using backports, installing from source may be the best bet.
+Jeśli możesz, jest użytecznym zainstalowanie Git ze źródeł, ponieważ uzyskasz ostatnią stabilną wersję. Każda wersja zazwyczaj posiada nowe użyteczne akcesoria UI, awięc ostatnia wersja jest zazwyczaj najlepszą drogą jeśli nie masz nic przeciwko kompilowaniu oprogramowania ze źródeł. Inna sprawa że dystrybucje Linuxowe często posiadają bardzo stare wersje paczek; awięc jeśli nie masz najświeższej wersji dystrybucji lub jeśli nie używasz backportów, instalacja ze źródeł może być najlepsza.
 
-To install Git, you need to have the following libraries that Git depends on: curl, zlib, openssl, expat, and libiconv. For example, if you’re on a system that has yum (such as Fedora) or apt-get (such as a Debian based system), you can use one of these commands to install all of the dependencies:
+Aby zainstalować Git, potrzebujesz następujące biblioteki, których Git używa: curl, zlib, openssl, expat oraz libiconv. Naprzykład, jeżeli używasz systemu, który posiada yum (jak naprzykład Fedora) lub apt-get (naprzykład system oparty o dystrybucje Debian), możesz użyć jednej z tych komend, aby zainstalować wszystkie zależności:
 
 	$ yum install curl-devel expat-devel gettext-devel \
 	  openssl-devel zlib-devel
@@ -135,92 +135,92 @@ To install Git, you need to have the following libraries that Git depends on: cu
 	$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
 	  libz-dev
 	
-When you have all the necessary dependencies, you can go ahead and grab the latest snapshot from the Git web site:
+Jeżeli masz wszystkie wymagane zależności, możesz śmiało wejść i ściągnąć ostatnią migawkę ze strony internetowej Git:
 
 	http://git-scm.com/download
 	
-Then, compile and install:
+A nastepnie, skompilować i zainstalować:
 
 	$ tar -zxf git-1.6.0.5.tar.gz
 	$ cd git-1.6.0.5
 	$ make prefix=/usr/local all
 	$ sudo make prefix=/usr/local install
 
-After this is done, you can also get Git via Git itself for updates:
+Jeśli to jest zrobione, możesz również pobrać Git poprzez Git po uaktualnienia:
 
 	$ git clone git://git.kernel.org/pub/scm/git/git.git
 	
-### Installing on Linux ###
+### Instalacja na Linux ###
 
-If you want to install Git on Linux via a binary installer, you can generally do so through the basic package-management tool that comes with your distribution. If you’re on Fedora, you can use yum:
+Jeżeli chcesz zainstalować Git na Linux poprzez binarny instalator, możesz generalnie zrobić to poprzez podstawowe narzędzie zarządzania pakietami dostępny wraz z twoją dystrybucją. Jeśli używasz Fedory, możesz użyć yum:
 
 	$ yum install git-core
 
-Or if you’re on a Debian-based distribution like Ubuntu, try apt-get:
+Jeżeli jesteś na dystrybucji opartej o system Debian jak Ubuntu, spróbuj apt-get:
 
 	$ apt-get install git-core
 
-### Installing on Mac ###
+### Instalacja na Mac ###
 
-There are two easy ways to install Git on a Mac. The easiest is to use the graphical Git installer, which you can download from the Google Code page (see Figure 1-7):
+Są dwa proste sposoby aby zainstalować Git na Mac. Najprostsza to użycie graficznego instalera Git, który można pobrać ze strony Google Code (zobacz Rycinę 1-7):
 
 	http://code.google.com/p/git-osx-installer
 
 Insert 18333fig0107.png 
-Figure 1-7. Git OS X installer.
+Rycina 1-7. Instalator Git dla OS X.
 
-The other major way is to install Git via MacPorts (`http://www.macports.org`). If you have MacPorts installed, install Git via
+Innym głównym sposobem jest instalacja Git poprzez MacPorts (`http://www.macports.org`). Jeśli masz zainstalowaną aplikacje MacPorts, zainstaluj Git poprzez komendę:
 
 	$ sudo port install git-core +svn +doc +bash_completion +gitweb
 
-You don’t have to add all the extras, but you’ll probably want to include +svn in case you ever have to use Git with Subversion repositories (see Chapter 8).
+Nie musisz dodawać wszystkich dodatków, ale prawdopodobnie będziesz chciał skożystać z +svn jeśli kiedykolwiek będziesz miał doczynienia z repozytoriami Subversion (zobacz Rozdział 8).
 
-### Installing on Windows ###
+### Instalacja na Windows ###
 
-Installing Git on Windows is very easy. The msysGit project has one of the easier installation procedures. Simply download the installer exe file from the Google Code page, and run it:
+instalacja Git na Windows jest bardzo prosta. Projekt msysGit ma jeden z łatwiejszych procedur instalacji. Poprostu pobierz plik exe z instalacją ze strony Google Code, i uruchom:
 
 	http://code.google.com/p/msysgit
 
-After it’s installed, you have both a command-line version (including an SSH client that will come in handy later) and the standard GUI.
+Po instalacji, będziesz posiadał obie - wersję w lini komend ( wraz z klientem SSH, który przyda się póżniej) oraz standardową wersję GIU.
 
-## First-Time Git Setup ##
+## Początkowe Ustawienie Git ##
 
-Now that you have Git on your system, you’ll want to do a few things to customize your Git environment. You should have to do these things only once; they’ll stick around between upgrades. You can also change them at any time by running through the commands again.
+Teraz jak już posiadasz Git na swoim systemie operacyjnym, będziesz chciał skonfigurować swoje środowisko Git. Będziesz musiał wykonać te czynności tylko raz; Będą się one utrzymywać między uaktualnieniami. Będziesz również mógł je zmienić w każdym momencie używając ponownie komendy.
 
-Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:
+Git zostaje zainstalowany wraz z narzędziem zwabyn git config, które pozwoli Ci pobrać oraz ustawić zmienne konfiguracyjne, które kontrolują wszystkie aspekty - jak Git działa oraz wygląda. Zmienne te mogą być przechowywane w trzech różnych miejscach:
 
-*	`/etc/gitconfig` file: Contains values for every user on the system and all their repositories. If you pass the option` --system` to `git config`, it reads and writes from this file specifically. 
-*	`~/.gitconfig` file: Specific to your user. You can make Git read and write to this file specifically by passing the `--global` option. 
-*	config file in the git directory (that is, `.git/config`) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in `.git/config` trump those in `/etc/gitconfig`.
+*	`/etc/gitconfig` plik: Zawiera wartości dla każdego użytkownika systemu oraz wszsytkie ich repozytoria. Jeżeli przekażesz opcję `--system` to `git config`, to git czyta oraz zapisuje do tego pliku. 
+*	`~/.gitconfig` plik: Przygotowany jedynie dla twojego użytkownika systemu. Możesz wymusić aby Git czytał oraz zapisywał do tego pliku kożystając z opcji `--global`.
+*	plik konfiguracji w katalogu git (dokładniej, `.git/config`) w każdym repozytorium, które używasz: plik jest ten wyspecyfikowany właśnie dla tego repozytorium. Każdy poziom nadpisuje wartości z poprzedniego poziomum, awięc wartości z `.git/config` nadpisują te z `/etc/gitconfig`.
 
-On Windows systems, Git looks for the `.gitconfig` file in the `$HOME` directory (`C:\Documents and Settings\$USER` for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.
+W systemie Widnows, Git poszukuje pliku `.gitconfig` w katalogu `$HOME` (`C:\Document and Settings\$USER` dla większości użytkowników). Git również wciąż poszukuje `/etc/gitconfig`, co wskazuje na główny katalog MSys, który znajduje się w miejscu, w którym zainstalowałeś Git.
 
-### Your Identity ###
+### Twoja Tożsamość ###
 
-The first thing you should do when you install Git is to set your user name and e-mail address. This is important because every Git commit uses this information, and it’s immutably baked into the commits you pass around:
+Pierwszą rzeczą jaką powinieneś zrobić po instalacji Git, jest ustawienie nazwy twojego użytkownika oraz adresu e-mail. Jest to ważne, ponieważ każdy commit Git używa tych informacji i są one niezmiennie wprowadzane do twoich commitów:
 
 	$ git config --global user.name "John Doe"
 	$ git config --global user.email johndoe@example.com
 
-Again, you need to do this only once if you pass the `--global` option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the `--global` option when you’re in that project.
+Ponownie, musisz wykonać operację to tylko raz przekazują opcję `--global`, ponieważ Git będzie zawsze używał tej informacji do wszystkiego co będziesz wykonywał w systemie. Jeśli chcesz nadpisać to inną nazwą lub adres e-mail dla wybranego projektu, możesz użyć komendy bez opcji `--global` jeśli będziesz w tym projekcie.
 
-### Your Editor ###
+### Twój Edytor ###
 
-Now that your identity is set up, you can configure the default text editor that will be used when Git needs you to type in a message. By default, Git uses your system’s default editor, which is generally Vi or Vim. If you want to use a different text editor, such as Emacs, you can do the following:
+Teraz twoja tożsamość jest zapisana, możesz zkonfigurować domniemany edytor textowy, który będzie używany gdy Git potrzebuje abyś wprowadził wiadomość. Podstawowo, Git używa domniemanego edytora twojego systemu, którym generalnie jest Vi lub Vim. Jeśli chcesz jednak używać innego edytora, takiego jak Emacs, możesz zrobić to wpisując:
 
 	$ git config --global core.editor emacs
 	
-### Your Diff Tool ###
+### Twoje Narzędzie Diff ###
 
-Another useful option you may want to configure is the default diff tool to use to resolve merge conflicts. Say you want to use vimdiff:
+Inną przydatną opcją, którą chciałbyś skonfigurować jest domniemane narzędzie diff (porównanie) używane do rozwiązywania konfliktów merg-ów. Powiedzmy że chcesz używac vimdiff:
 
 	$ git config --global merge.tool vimdiff
 
-Git accepts kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff as valid merge tools. You can also set up a custom tool; see Chapter 7 for more information about doing that.
+Git akceptuje kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff jako obowiozujące narzędzia do merge-ów. Możesz również ustawić zwykłe narzędzie; zobacz Rozdział 7 wcelu uzyskania większej ilości informacji na ten temat.
 
-### Checking Your Settings ###
+### Sprawdzanie Swoich Ustawień ###
 
-If you want to check your settings, you can use the `git config --list` command to list all the settings Git can find at that point:
+Jeśli chcesz sprawdzić swoje ustawienia, możesz użyć komendy `git config--list` aby wylistować wszystkie ustawienia, które może Git odnaleźć z tej pozycji:
 
 	$ git config --list
 	user.name=Scott Chacon
@@ -231,28 +231,28 @@ If you want to check your settings, you can use the `git config --list` command 
 	color.diff=auto
 	...
 
-You may see keys more than once, because Git reads the same key from different files (`/etc/gitconfig` and `~/.gitconfig`, for example). In this case, Git uses the last value for each unique key it sees.
+Możesz zaobserwować niektóre klucze częściej niż raz, ponieważ Git czyta te same klucze z różnych plików (naprzykład `/etc/gitconfig` oraz `~/.gitconfig`). W takim przypadku Git używa ostatniej wartości dla każdego unikalnego klucza, który widzi.
 
-You can also check what Git thinks a specific key’s value is by typing `git config {key}`:
+Możesz również sprawdzić jaką wartość widzi Git pod wybranym kluczem wpisując `git config {key}`:
 
 	$ git config user.name
 	Scott Chacon
 
-## Getting Help ##
+## Uzyskiwanie Pomocy ##
 
-If you ever need help while using Git, there are three ways to get the manual page (manpage) help for any of the Git commands:
+Jeśli kiedykowiek będziesz potrzebować pomocy w używaniu Git, są trzy różne sposoby aby uzyskąc stronę manuala (manpage) dla każdej z komend Git:
 
 	$ git help <verb>
 	$ git <verb> --help
 	$ man git-<verb>
 
-For example, you can get the manpage help for the config command by running
+Na przykład, możesz otrzymać pomoc manpage dla komendy config wpisując:
 
 	$ git help config
 
-These commands are nice because you can access them anywhere, even offline.
-If the manpages and this book aren’t enough and you need in-person help, you can try the `#git` or `#github` channel on the Freenode IRC server (irc.freenode.net). These channels are regularly filled with hundreds of people who are all very knowledgeable about Git and are often willing to help.
+Te komendy są świetne ponieważ masz do nich dostęp z każdego miejsca, nawet jeśli jesteś offline.
+Jeśli strony manpage oraz książka nie są wystarczające  i potrzebujesz osobistej pomocy, możesz spróbować kanałów IRC `#git` lub `#github` na serwerze Freenode (irc.freenode.net). Kanały te są regularnie wypełnione setkami ludzi, którzy są zorientowani na temat Git i często skorzy do pomocy.
 
-## Summary ##
+## Podsumowanie ##
 
-You should have a basic understanding of what Git is and how it’s different from the CVCS you may have been using. You should also now have a working version of Git on your system that’s set up with your personal identity. It’s now time to learn some Git basics.
+Powinieneś mieć podstawową wiedzę czym jest Git i czym się różni od CVCS, które mogłeś używać. Powinieneś również już mieć działającą wersję Git na swoim systemie, który jest ustawiony twoją własną tożsamością. Teraz przyszedł czas dowiedzieć się na temat podstaw Git.
